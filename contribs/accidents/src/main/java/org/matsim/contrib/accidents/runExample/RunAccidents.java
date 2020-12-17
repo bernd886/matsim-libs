@@ -55,7 +55,6 @@ public class RunAccidents {
 		String configFile = "path/to/configFile.xml";
 		
 		Config config = ConfigUtils.loadConfig(configFile );
-		
 		AccidentsConfigGroup accidentsSettings = ConfigUtils.addOrGetModule(config, AccidentsConfigGroup.class);
 		accidentsSettings.setEnableAccidentsModule(true);
 		
