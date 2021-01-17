@@ -28,6 +28,9 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYSeries;
+
+import java.util.Map;
 
 /**
  * Creates two-dimensional, vertical bar charts. Supports multiple series, which are shown next to each other
@@ -108,5 +111,14 @@ public class StackedBarChart extends ChartUtil {
 			cnt++;
 		}
 	}
-
+	////// EDIT: STACKED_BAR addseries for string, map /////////////////////////////////////////////////////////
+	public void addSeries(String title, Map<Integer, Double> map) {
+		int cnt = 1;
+		for ( Map.Entry<Integer,Double> entry : map.entrySet() ) {
+			String category = (cnt > this.categories.length ? Integer.toString(cnt) : this.categories[cnt-1]);
+			this.dataset.addValue(entry.getValue(), title, category);
+			cnt++;
+		}
+	}
+	////// EDIT END: STACKED_BAR addseries for string, map /////////////////////////////////////////////////////////
 }

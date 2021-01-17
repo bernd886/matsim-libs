@@ -28,6 +28,8 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.renderer.xy.XYBarPainter;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
@@ -44,9 +46,11 @@ import org.matsim.core.router.AnalysisMainModeIdentifier;
 import org.matsim.core.router.MainModeIdentifier;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.TripStructureUtils.Trip;
+import org.matsim.core.utils.charts.StackedBarChart;
 import org.matsim.core.utils.charts.XYLineChart;
 import org.matsim.core.utils.io.IOUtils;
 import org.matsim.core.utils.io.UncheckedIOException;
+
 
 /**
  * Calculates at the end of each iteration mode statistics, based on the main mode identifier of a trip chain.
@@ -182,9 +186,36 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 //					log.warn( item.getKey() + " -- " + item.getValue() );
 //				}
 				chart.addSeries(mode, history ) ;
+				// EDIT
+				// System.out.println("Using forEach + lambda expression");
+				// history.forEach((k,v) -> System.out.println(mode + " - " + k + " - " + v));
+				// EDIT
 			}
+
 			chart.addMatsimLogo();
 			chart.saveAsPng(this.modeFileName + ".png", 800, 600);
+			/////// EDIT: STACKED_BAR ///////////////////////////////////////////////////////
+			if (this.createPNG && event.getIteration() > this.minIteration) {
+				// create chart when data of more than one iteration is available.
+				StackedBarChart chart2 = new StackedBarChart("Mode Statistics", "iteration", "mode");
+				for (Entry<String, Map<Integer, Double>> entry : this.modeHistories.entrySet()) {
+					String mode = entry.getKey();
+					Map<Integer, Double> history = entry.getValue();
+//				log.warn( "about to add the following series:" ) ;
+//				for ( Entry<Integer, Double> item : history.entrySet() ) {
+//					log.warn( item.getKey() + " -- " + item.getValue() );
+//				}
+					chart2.addSeries(mode, history);
+					// EDIT
+					// System.out.println("STACKED: Using forEach + lambda expression");
+					// history2.forEach((k, v) -> System.out.println(mode + " - " + k + " - " + v));
+					// EDIT
+				}
+
+				chart2.addMatsimLogo();
+				chart2.saveAsPng(this.modeFileName + "_stackedbar.png", 800, 600);
+			}
+			/////// EDIT END: STACKED_BAR ///////////////////////////////////////////////////////
 		}
 		modeCnt.clear();
 	}

@@ -31,6 +31,6 @@ public class RunOneSharedTaxiExampleIT {
 	@Test
 	public void testRun() {
 		URL configUrl = IOUtils.extendUrl(ExamplesUtils.getTestScenarioURL("dvrp-grid"), "one_shared_taxi_config.xml");
-		RunOneSharedTaxiExample.run(configUrl, false, 1);
+		RunOneSharedTaxiExample.run(configUrl, false, 5);
 	}
 }
