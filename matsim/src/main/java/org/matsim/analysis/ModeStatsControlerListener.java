@@ -197,7 +197,7 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 			/////// EDIT: STACKED_BAR ///////////////////////////////////////////////////////
 			if (this.createPNG && event.getIteration() > this.minIteration) {
 				// create chart when data of more than one iteration is available.
-				StackedBarChart chart2 = new StackedBarChart("Mode Statistics", "iteration", "mode");
+				StackedBarChart chart2 = new StackedBarChart("Mode Statistics", "iteration", "share");
 				for (Entry<String, Map<Integer, Double>> entry : this.modeHistories.entrySet()) {
 					String mode = entry.getKey();
 					Map<Integer, Double> history = entry.getValue();
