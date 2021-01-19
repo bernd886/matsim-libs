@@ -30,7 +30,7 @@ public class TestSiouxFalls {
 		DiscreteModeChoiceConfigurator.configureAsSubtourModeChoiceReplacement(config);
 
 		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
-		config.controler().setLastIteration(1);
+		config.controler().setLastIteration(100);
 
 		config.qsim().setFlowCapFactor(10000.0);
 		config.qsim().setStorageCapFactor(10000.0);

@@ -29,6 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.DefaultTableXYDataset;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.matsim.contrib.drt.run.DrtConfigGroup;
@@ -125,6 +126,19 @@ public class DrtVehicleOccupancyProfileWriter implements IterationEndsListener {
 
 		DefaultTableXYDataset dataset = new DefaultTableXYDataset();
 		Lists.reverse(seriesList).forEach(dataset::addSeries);
+		/////////////////////////////////////////////////////////////////////////////////
+		/*for( int i = 0; i < dataset.getSeriesCount(); i++) {
+			String name = dataset.getSeriesKey(i).toString();
+			System.out.println("Begin Serie " + name);
+			XYSeries xySeries = dataset.getSeries(i);
+			for( int j = 0; j < xySeries.getItemCount(); j++ ) {
+				Number itemX = xySeries.getDataItem(j).getX();
+				Number itemY = xySeries.getDataItem(j).getY();
+				System.out.println("Serie " + name + ": " + itemY + ", " + itemY);
+			}
+			System.out.println("End Serie " + name);
+		}*/
+		/////////////////////////////////////////////////////////////////////////////////
 		return dataset;
 	}
 

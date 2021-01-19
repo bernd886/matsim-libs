@@ -20,16 +20,26 @@
 
 package org.matsim.analysis;
 
+import java.awt.*;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarPainter;
+import org.jfree.data.xy.DefaultTableXYDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
@@ -201,10 +211,12 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 				for (Entry<String, Map<Integer, Double>> entry : this.modeHistories.entrySet()) {
 					String mode = entry.getKey();
 					Map<Integer, Double> history = entry.getValue();
-//				log.warn( "about to add the following series:" ) ;
-//				for ( Entry<Integer, Double> item : history.entrySet() ) {
-//					log.warn( item.getKey() + " -- " + item.getValue() );
-//				}
+
+				log.warn( "about to add the following series:" ) ;
+				for ( Entry<Integer, Double> item : history.entrySet() ) {
+					log.warn( item.getKey() + " -- " + item.getValue() );
+				}
+
 					chart2.addSeries(mode, history);
 					// EDIT
 					// System.out.println("STACKED: Using forEach + lambda expression");
@@ -215,7 +227,52 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 				chart2.addMatsimLogo();
 				chart2.saveAsPng(this.modeFileName + "_stackedbar.png", 800, 600);
 			}
-			/////// EDIT END: STACKED_BAR ///////////////////////////////////////////////////////
+			/////// EDIT : STACKED_AREA ///////////////////////////////////////////////////////
+			DefaultTableXYDataset testDataSet = new DefaultTableXYDataset();
+
+			for (Entry<String, Map<Integer, Double>> entry : this.modeHistories.entrySet()) {
+
+				String name = entry.getKey();
+
+				Map<Integer, Double> history = entry.getValue();
+
+				XYSeries series = new XYSeries(name, true, false);
+				//log.warn( "about to add the following series to " + name + ": ") ;
+				for ( Entry<Integer, Double> item : history.entrySet() ) {
+					//log.warn( item.getKey() + " -- " + item.getValue() );
+					series.add( item.getKey(), item.getValue());
+				}
+
+				testDataSet.addSeries( series );
+
+				// chart2.addSeries(mode, history);
+				// EDIT
+				// System.out.println("STACKED: Using forEach + lambda expression");
+				// history2.forEach((k, v) -> System.out.println(mode + " - " + k + " - " + v));
+				// EDIT
+			}
+
+			for( int i = 0; i < testDataSet.getSeriesCount(); i++) {
+				String name = testDataSet.getSeriesKey(i).toString();
+				System.out.println("Begin Serie " + name);
+				XYSeries xySeries = testDataSet.getSeries(i);
+				for( int j = 0; j < xySeries.getItemCount(); j++ ) {
+					Number itemX = xySeries.getDataItem(j).getX();
+					Number itemY = xySeries.getDataItem(j).getY();
+					System.out.println("Serie " + name + ": " + itemX + ", " + itemY);
+				}
+				System.out.println("End Serie " + name);
+			}
+
+			JFreeChart testChart = ChartFactory.createStackedXYAreaChart("shares by iteration (stacked area)", "iteration", "share", testDataSet,
+					PlotOrientation.VERTICAL, true, false, false);
+
+			makeStayTaskSeriesGrey(testChart.getXYPlot());
+			String imageFile = "testChart";
+
+			saveAsPNG(testChart, imageFile, 1500, 1000);
+
+			///////////////////////////////////////////////////////////////////////////////////
 		}
 		modeCnt.clear();
 	}
@@ -224,4 +281,20 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 		return Collections.unmodifiableMap( this.modeHistories ) ;
 	}
 
+	////////////copied methods - to not depend on dvrp ///////////////////////////////////////////////////////
+	private void makeStayTaskSeriesGrey(XYPlot plot) {
+		XYDataset dataset = plot.getDataset(0);
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+				plot.getRenderer().setSeriesPaint(i, Color.LIGHT_GRAY);
+				return;
+		}
+	}
+	private static void saveAsPNG(JFreeChart chart, String filename, int width, int height) {
+		try {
+			ChartUtils.writeChartAsPNG(new FileOutputStream(filename + ".png"), chart, width, height);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
