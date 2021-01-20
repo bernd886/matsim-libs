@@ -270,7 +270,7 @@ public final class ModeStatsControlerListener implements StartupListener, Iterat
 			makeStayTaskSeriesGrey(testChart.getXYPlot());
 			String imageFile = "testChart";
 
-			saveAsPNG(testChart, imageFile, 1500, 1000);
+			saveAsPNG(testChart, imageFile, 800, 600);
 
 			///////////////////////////////////////////////////////////////////////////////////
 		}
